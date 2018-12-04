@@ -1,0 +1,74 @@
+html,
+body {
+    height: 100%;
+    position: relative;
+}
+
+.logo {
+    width: 120px;
+    height: 31px;
+    background: rgba(255, 255, 255, .2);
+    margin: 16px 24px 16px 0;
+    float: left;
+}
+
+//表单弹层的样式
+.collection-create-form_last-form-item {
+    margin-bottom: 0;
+} //表单中上传图片的样式
+.avatar-uploader>.ant-upload {
+    width: 128px;
+    height: 128px;
+}
+
+.imgGood {
+    width: 128px;
+    height: 128px;
+}
+
+#root {
+    height: 100%;
+}
+
+#root>.layout {
+    min-height: 100%;
+}
+
+.ant-layout-content {
+    padding: 50px 50px 0 50px;
+    display: flex;
+    .content {
+        padding: 24px;
+        flex: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .box {
+            width: 100%;
+            height: 100%
+        }
+        .content_goods {
+            width: 75%;
+            flex: auto;
+            .good {
+                position: relative;
+                z-index: 1;
+                float: left;
+                width: 234px;
+                height: 260px;
+                padding: 20px 0;
+                margin-left: 14px;
+                margin-bottom: 14px;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                .goodImg {
+                    width: 160px;
+                    height: 160px;
+                }
+            }
+        }
+        .pagination {}
+    }
+}
