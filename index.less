@@ -26,6 +26,33 @@ body {
     height: 128px;
 }
 
+//上传图片模块样式
+.imgContainer {
+    width: 128px;
+    height: 128px;
+    padding: 8px;
+    border: 1px dashed rgb(217, 217, 217);
+    background-color: rgb(250, 250, 250);
+    transition: border 0.5s;
+    position: relative;
+    box-sizing: content-box;
+    &:hover {
+        border-color: deepskyblue;
+    }
+    .imgInput {
+        width: 128px;
+        height: 128px;
+        background-color: deepskyblue;
+        opacity: 0;
+        position: absolute;
+    }
+    .imgGood {
+        width: 128px;
+        height: 128px;
+        opacity: 0;
+    }
+}
+
 #root {
     height: 100%;
 }
@@ -69,6 +96,6 @@ body {
                 }
             }
         }
-        .pagination {}
+        // .pagination {}
     }
 }

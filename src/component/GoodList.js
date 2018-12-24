@@ -4,18 +4,18 @@ import Action from '../../redux/action'
 import Good from './Good';
 class GoodList extends Component {
     componentDidMount() {
-        // this.props.getList();
+        this.props.getList();
     }
     render() {
-        console.log(this.props.goodsList)
         return (
             <div className="content_goods">
                 {this.props.goodsList.map(
-                    (item, index) => (
+                    (item) => (
                         <Good imgSrc={item.imgSrc}
                             name={item.name}
                             price={item.price}
-                            key={index}
+                            key={item.id}
+                            id={item.id}
                         ></Good>
                     )
                 )}
@@ -27,7 +27,7 @@ class GoodList extends Component {
 export default connect(mapStateToprops, mapDispatchToProps)(GoodList);
 function mapStateToprops(state, ownProps) {
     return {
-        goodsList: state.goodsList
+        goodsList: state.goodsList//根据最新学习，这里是selector  对于需要计算得出的结果还需编写selector  更需要引入reselect库来判断render
     }
 }
 function mapDispatchToProps(dispatch, ownProps) {

@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
+import { hot } from 'react-hot-loader/root'
 import { Layout, Menu, Pagination } from 'antd';
 const { Header, Content, Footer } = Layout;
 
 import GoodsList from './GoodList';
 import AddModle from './AddModule';
 
-class app extends Component {
+class App extends Component {
     render() {
         return (
             <Layout className="layout">
+                {/*导航区*/}
                 <Header>
                     <div className="logo"></div>
                     <Menu
@@ -19,6 +21,7 @@ class app extends Component {
                         <AddModle></AddModle>
                     </Menu>
                 </Header>
+                {/*内容区*/}
                 <Content>
                     <div className="content">
                         <GoodsList></GoodsList>
@@ -33,4 +36,4 @@ class app extends Component {
     }
 }
 
-export default app;
+export default hot(App);

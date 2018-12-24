@@ -12,11 +12,7 @@ import reducer from './redux/reducer.js';
 const store = createStore(reducer,
     {
         isFetching: false,
-        goodsList: [{
-            name: '小米8',
-            price: 1399,
-            imgSrc: require('./src/imges/8.jpg')
-        }]
+        goodsList: []
     }, applyMiddleware(thunk));
 
 import zhCN from 'antd/lib/locale-provider/zh_CN';

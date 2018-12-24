@@ -5,25 +5,43 @@ import {
 
 const FormItem = Form.Item;
 
-const CollectionCreateForm = Form.create()(
+const CollectionCreateForm = Form.create({
+    mapPropsToFields: (props) => {
+        return {
+            name: Form.createFormField(
+                {
+                    a: 'a',
+                    b: 'b'
+                }
+            )
+        }
+    },
+    validateMessages: { required: '%s 是必须的' },
+    onFieldsChange(props, changedFields) {
+        // console.log(props, changedFields);
+    },
+    onValuesChange(props, changedValues, allValues) {
+        // console.log(props, changedValues, allValues)
+    }
+})(
     // eslint-disable-next-line
     class extends React.Component {
         render() {
             const {
-                visible, onCancel, onCreate, form, onTest
+                visible, onCancel, onCreate, form, onTest, wrappedInputRef
             } = this.props;
-            const { getFieldDecorator } = form;
+            const { getFieldDecorator } = form;//这个form参数是包装后的 很特别的对象
             return (
                 <Modal
                     visible={visible}
-                    title="Create a new collection"
-                    okText="Create"
+                    title="添加一件商品"
+                    okText="添加"
                     onCancel={onCancel}
                     onOk={onCreate}
                 >
                     <Form layout="vertical">
-                        <Avatar></Avatar>
-                        <FormItem label="名称">
+                        <GoodPic wrappedInputRef={wrappedInputRef} />
+                        <FormItem label="名称:" colon={false}>
                             {getFieldDecorator('name', {
                                 rules: [{ required: true, message: '清输入商品名称' }],
                             })(
@@ -36,6 +54,9 @@ const CollectionCreateForm = Form.create()(
                             })(
                                 <Input />
                             )}
+                        </FormItem>
+                        <FormItem>
+                            <input type="text" />
                         </FormItem>
                         <Button type="primary" onClick={onTest}>test</Button>
                     </Form>
@@ -59,17 +80,41 @@ class CollectionsPage extends React.Component {
     }
 
     handleCreate = () => {
-        console.log(this.formRef.props);
         const form = this.formRef.props.form;
         form.validateFields((err, values) => {
+            //图片没有做验证
             if (err) {
+                console.log(err);
+                console.log(form.getFieldError('price'));
                 return;
             }
 
             console.log('Received values of form: ', values);
             form.resetFields();
-            form.setFieldsValue({ description: 'hello world' });
             this.setState({ visible: false });
+            //在这里进行数据提交
+
+            var xmlhttp,
+                formData = new FormData();
+            formData.append('name', values.name);
+            formData.append('price', values.price);
+            formData.append('picture', this.inputRef.files[0]);
+            if (window.XMLHttpRequest) {
+                //  IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+                xmlhttp = new XMLHttpRequest();
+            }
+            else {
+                // IE6, IE5 浏览器执行代码
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    //这里回调
+                    console.log(xmlhttp.responseText);
+                }
+            }
+            xmlhttp.open("POST", "http://localhost:3000/upLoad", true);
+            xmlhttp.send(formData);
         });
     }
 
@@ -77,16 +122,23 @@ class CollectionsPage extends React.Component {
         this.formRef = formRef;
     }
 
+    saveInputRef = (inputRef) => {
+        this.inputRef = inputRef;
+    }
+
     handleTest = () => {
-        console.log('12300', this.formRef.props.form.isFieldTouched('title'));
+        const form = this.formRef.props.form;
+        form.setFieldsValue({ name: 'hello' })
+        console.log(this.inputRef);
     }
 
     render() {
         return (
             <div>
-                <Button type="primary" onClick={this.showModal}>New Collection</Button>
+                <Button type="primary" onClick={this.showModal}>添加商品</Button>
                 <CollectionCreateForm
                     wrappedComponentRef={this.saveFormRef}
+                    wrappedInputRef={this.saveInputRef}
                     visible={this.state.visible}
                     onCancel={this.handleCancel}
                     onCreate={this.handleCreate}
@@ -97,68 +149,42 @@ class CollectionsPage extends React.Component {
     }
 }
 
-
-import { Upload, Icon, message } from 'antd';
-
-function getBase64(img, callback) {
-    const reader = new FileReader();
-    reader.addEventListener('load', () => callback(reader.result));
-    reader.readAsDataURL(img);
-}
-
-function beforeUpload(file) {
-    const isJPG = file.type === 'image/jpeg';
-    if (!isJPG) {
-        message.error('You can only upload JPG file!');
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-        message.error('Image must smaller than 2MB!');
-    }
-    return isJPG && isLt2M;
-}
-
-class Avatar extends React.Component {
-    state = {
-        loading: false,
-    };
-
-    handleChange = (info, ...rest) => {
-        console.log(info, rest);
-        if (info.file.status === 'uploading') {
-            this.setState({ loading: true });
-            return;
-        }
-        if (info.file.status === 'done') {
-            // Get this url from response in real world.
-            getBase64(info.file.originFileObj, imageUrl => this.setState({
-                imageUrl,
-                loading: false,
-            }));
+class GoodPic extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            url: '',
+            hasImg: false
         }
     }
-
+    setImg = () => {
+        let reader = new FileReader();
+        reader.addEventListener('load', () => {
+            this.setState({
+                url: reader.result,
+                hasImg: true
+            });
+        });
+        reader.readAsDataURL(this.inputRef.files[0]);
+    }
     render() {
-        const uploadButton = (
-            <div>
-                <Icon type={this.state.loading ? 'loading' : 'plus'} />
-                <div className="ant-upload-text">Upload</div>
-            </div>
-        );
-        const imageUrl = this.state.imageUrl;
+        const style = {
+            opacity: this.state.hasImg ? 1 : 0
+        };
         return (
-            <Upload
-                name="avatar"
-                listType="picture-card"
-                className="avatar-uploader"
-                showUploadList={false}
-                action="http://localhost:3000/upLoad"
-                beforeUpload={beforeUpload}
-                onChange={this.handleChange}
-            >
-                {imageUrl ? <img className={'imgGood'} src={imageUrl} alt="avatar" /> : uploadButton}
-            </Upload>
-        );
+            <div className='imgContainer'>
+                <input type='file'
+                    className='imgInput'
+                    name='picture'
+                    ref={(ref) => {
+                        this.inputRef = ref;
+                        this.props.wrappedInputRef(ref);
+                    }}
+                    onChange={this.setImg}
+                ></input>
+                {this.state.url ? <img className='imgGood' style={style} src={this.state.url} alt='图片加载失败' /> : null}
+            </div>
+        )
     }
 }
 

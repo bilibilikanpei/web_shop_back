@@ -21,6 +21,31 @@ body {
   width: 128px;
   height: 128px;
 }
+.imgContainer {
+  width: 128px;
+  height: 128px;
+  padding: 8px;
+  border: 1px dashed #d9d9d9;
+  background-color: #fafafa;
+  transition: border 0.5s;
+  position: relative;
+  box-sizing: content-box;
+}
+.imgContainer:hover {
+  border-color: deepskyblue;
+}
+.imgContainer .imgInput {
+  width: 128px;
+  height: 128px;
+  background-color: deepskyblue;
+  opacity: 0;
+  position: absolute;
+}
+.imgContainer .imgGood {
+  width: 128px;
+  height: 128px;
+  opacity: 0;
+}
 #root {
   height: 100%;
 }
